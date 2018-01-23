@@ -19,15 +19,6 @@ private:
 	time_t start = time(NULL);
 	class food *next = NULL;
 public:
-
-	
-
-	food(){ return; }		//default constructor
-
-	void set_spec(unsigned int i, char *n, unsigned int m, unsigned int p, time_t c, time_t s)
-
-
-
 	food(){ return; }		//default constructor
 
 	void set_spec(unsigned int i, char *n, unsigned int m, unsigned int p, time_t c, time_t s)
