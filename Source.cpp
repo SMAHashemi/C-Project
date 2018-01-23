@@ -7,28 +7,6 @@ using namespace std;
 
 #define MAX_FOOD 30
 
-/*
-class food
-{
-private:
-	
-	unsigned int id;
-	unsigned int max_no;
-	time_t cook_duration;
-	time_t start;
-public:
-	food(unsigned int i, unsigned int m, time_t c, time_t s)
-		: id(i), max_no(m), cook_duration(c), start(s)
-	{}
-	int is_finish()
-	{
-		if ()
-	}
-
-};
-*/
-
-
 
 class food
 {
@@ -41,15 +19,14 @@ private:
 	time_t start = time(NULL);
 	class food *next = NULL;
 public:
-	/*
-	food(unsigned int i, unsigned int m, unsigned int p, time_t c)
-	{
-		id = i;
-		max_no = m;
-		cook_duration = c*10000;
-		price = p;
-	}
-	*/
+
+	
+
+	food(){ return; }		//default constructor
+
+	void set_spec(unsigned int i, char *n, unsigned int m, unsigned int p, time_t c, time_t s)
+
+
 
 	food(){ return; }		//default constructor
 
@@ -58,10 +35,11 @@ public:
 		id = i;
 		strcpy(name, n);
 		max_no = m;
-		cook_duration = c * 10000;
+		cook_duration = c;
 		price = p;
 		start = s;
 	}
+
 
 	int get_id(){ return id; }
 	char *get_name(){ return name; }
@@ -88,19 +66,19 @@ class customer
 void custom(const char new_food_name[])
 {
 	cout << "Enter price";
-	//cin>>
 }
 
 void set_default_foods()
 {
-	samples[0].set_spec(0, "chicken", 3, 8, 2, 0);
-	samples[1].set_spec(1, "meat", 3, 12, 3, 0);
-	samples[2].set_spec(2, "bread", 4, 2, 1, 0);
-	samples[3].set_spec(3, "nooshabe", 3, 3, 1, 0);
-	samples[4].set_spec(4, "doogh", 3, 2, 1, 0);
+	samples[0].set_spec(0, "chicken", 3, 8, 20000, 0);
+	samples[1].set_spec(1, "meat", 3, 12, 30000, 0);
+	samples[2].set_spec(2, "bread", 4, 2, 10000, 0);
+	samples[3].set_spec(3, "nooshabe", 3, 3, 10000, 0);
+	samples[4].set_spec(4, "doogh", 3, 2, 10000, 0);
 
 }
 void cook(int food_id)
+
 {
 	class food *new_foodptr = (class food*)malloc(sizeof(class food));
 	new_foodptr->set_spec(samples[food_id].get_id(), samples[food_id].get_name(), samples[food_id].get_max_no(), samples[food_id].get_price(), samples[food_id].get_cook_duration(), time(NULL));
@@ -117,17 +95,10 @@ void cook(int food_id)
 	foods_list_tailptr[food_id] = new_foodptr;
 }
 
-void default_foods(void)
-{
-
-}
-
 
 int main(void)
 {
 	set_default_foods();
-	printf("%d", time(NULL));
-	cook(1);
-	cook(1);
+
 	return 0;
 }
