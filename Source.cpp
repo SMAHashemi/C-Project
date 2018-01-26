@@ -62,6 +62,32 @@ public:
 	time_t get_start(void){ return start; }
 	class food *get_next(){ return next; }
 	void set_next(class food *newfood){ next = newfood; }
+	void pr(void)
+	{
+		if (id == 2)
+		{
+			if ((time(NULL) - start) > cook_duration)
+			{
+				printf("\n%s%s\n%s%u\n%s%\ns", "Name: ", "bread", "Number: ", number, "Time to finish: ", "completed!");
+				return;
+			}
+			else
+			{
+				printf("\n%s%s\n%s%u\n%s%u\n", "Name: ", "bread", "Number: ", number, "Time to finish: ", cook_duration - (time(NULL) - start));
+				return;
+			}
+
+		}
+		if ( (time(NULL) - start) > cook_duration)
+		{
+			printf("\n%s%s\n%s%u\n%s%s\n", "Name: ", name, "Number: ", number,"Time to finish: ", "completed!");
+		}
+		else
+		{
+			printf("\n%s%s\n%s%u\n%s%u\n", "Name: ", name, "Number: ", number, "Time to finish: ", cook_duration - (time(NULL) - start));
+		}
+		
+	}
 };
 
 class food *foods_list_headptr[MAX_FOOD] = { NULL };    //i-th member is a ponter to head of queue of food ID=i
@@ -126,6 +152,12 @@ public:
 	void add_tolerance(time_t at){ tolerance += at; }
 	time_t get_tolerance(){ return tolerance; }
 	time_t get_start(){ return start; }
+
+	void pr(void)
+	{
+		printf("\n%s%u\n%s%s%s\n%s%s%s\n%s%u\n", "Customer number ", id, "Food: ", samples[food_id].get_name(), gfood ? "\t(given)" : "\t(NOT given)",
+			"Drink: ", samples[drink_id].get_name(), gdrink ? "\t(given)" : "\t(NOT given)", "time left: ", time(NULL) - start);
+	}
 };
 
 
@@ -141,19 +173,18 @@ void cook(int food_id);
 void give(unsigned int food_id, unsigned int customer_id);
 void put_give(unsigned int food_id, unsigned int customer_id);
 bool c_check(unsigned int i);
-
+void check(void);
+void instructions(void);
 
 int main(void)
 {
 	//srand(time(NULL));
 	set_default_foods();
 	set_initial_customers();
-	cook(1);
-	give(4, 0);
-	put_give(1, 0);
-	cook(0);
-	give(4, 1);
-	put_give(0, 1);
+	while (true)
+	{
+		instructions();
+	}
 	return 0;
 }
 
@@ -225,11 +256,11 @@ void custom(char new_food_name[])
 
 void set_default_foods()
 {
-	samples[0].set_spec(0, "chicken", 3, 0, 8, true, 2, 0);
-	samples[1].set_spec(1, "meat", 3, 0, 12, true, 3, 0);
-	samples[2].set_spec(2, "bread", 4, 0, 2, false, 1, 0);
-	samples[3].set_spec(3, "nooshabe", 3, 0, 3, false, 1, 0);
-	samples[4].set_spec(4, "doogh", 3, 0, 2, false, 1, 0);
+	samples[0].set_spec(0, "chicken", 3, 0, 8, true, 20, 0);
+	samples[1].set_spec(1, "meat", 3, 0, 12, true, 30, 0);
+	samples[2].set_spec(2, "bread", 4, 0, 2, false, 10, 0);
+	samples[3].set_spec(3, "nooshabe", 3, 0, 3, false, 10, 0);
+	samples[4].set_spec(4, "doogh", 3, 0, 2, false, 10, 0);
 	cook(2);
 	cook(3);
 	cook(4);
@@ -377,8 +408,173 @@ void put_give(unsigned int food_id, unsigned int customer_id)
 		return;
 	}
 	cout << endl << samples[food_id].get_name() << " gave to customer number " << customer_id <<
-		" and " << samples[food_id].get_price() + 2 << "bitqueens added to cash.";
+		" and " << samples[food_id].get_price() + 2 << " bitqueens added to cash.";
 	customers[customer_id].add_tolerance(10);
+}
+
+void check(void)
+{
+	cout << endl << "Foods: ";
+	class food *tempptr = NULL;
+	for (size_t i = 0; i < MAX_FOOD; i++)
+	{
+		tempptr = foods_list_headptr[i];
+		if (tempptr != NULL)
+		{
+
+
+		while (tempptr != foods_list_tailptr[i])
+		{
+			(*tempptr).pr();
+				tempptr = (*tempptr).get_next();
+		}
+		if (foods_list_headptr[i] != foods_list_tailptr[i])
+		{
+			(*tempptr).pr();
+		}
+		else
+		{
+			foods_list_headptr[i]->pr();
+		}
+		}
+	}
+	
+
+	cout << endl << "Customers: ";
+	for (size_t i = 0; i < MAX_CUSTOMER; i++)
+	{
+		c_check(i);
+		customers[i].pr();
+	}
+	cout << endl << "Cash: " << cash;
+}
+
+
+void instructions(void)
+{
+	cout << endl;
+	int choice = -1, customer = -1, i = 0, food_id, drink_id;
+	char work[10];
+	char food[10];
+	char a[10], b[10], c[10], d[10], e[10];
+	scanf("%s", work);
+	if (!strcmp(work, "cook"))
+	{
+		scanf("%s", food);
+		while (i<foods_no)
+		{
+			if (!strcmp(food, samples[i].get_name()))
+			{
+				food_id = i;
+				choice = 1;
+			}
+			i++;
+		}
+	}
+	if (!strcmp(work, "put"))
+	{
+		scanf("%s", food);
+		i = 0;
+		while (i<foods_no)
+		{
+			if (!strcmp(food, samples[i].get_name()))
+				food_id = i;
+			i++;
+		}
+		scanf("%s", a);
+		scanf("%s", b);
+		scanf("%s", c);
+		scanf("%s", d);
+		scanf("%s", e);
+		if (!strcmp(a, "into") && !strcmp(b, "bread") && !strcmp(c, "and") && !strcmp(d, "give") && !strcmp(e, "to"))
+		{
+			scanf("%d", &customer);
+			if (customer > MAX_CUSTOMER)
+			{
+				cout << endl << "This customer does not exist! enter a number between " << 0 << " and " << MAX_CUSTOMER-1;
+				return;
+			}
+			if (food_id>ingredients_no)
+			{
+				cout << endl << "This food does not exist! enter a number between " << 0 << " and " <<foods_no - 1;
+				return;
+			}
+			choice = 2;
+		}
+		else
+		{
+			scanf("%d", &customer);
+			cout << endl << "Invalid input";
+			return;
+		}
+	}
+	if (!strcmp(work, "check"))
+	{
+		choice = 3;
+	}
+	if (!strcmp(work, "give"))
+	{
+		scanf("%s", food);
+		scanf("%s", a);
+		scanf("%d", &customer);
+
+		if (strcmp(a, "to"))
+		{
+			cout << endl << "Invalid input";
+			return;
+		}
+		if (customer > MAX_CUSTOMER)
+		{
+			cout << endl << "This customer does not exist! enter a number between " << 0 << " and " << MAX_CUSTOMER - 1;
+			return;
+		}
+		i = 0;
+		while (i<foods_no)
+		{
+			if (!strcmp(food, samples[i].get_name()))
+				food_id = i;
+			i++;
+		}
+		choice = 4;
+	}
+	if (!strcmp(work, "custom"))
+	{
+		scanf("%s", food);
+		choice = 5;
+	}
+
+	switch (choice)
+	{
+	case 1:
+	{
+		cook(food_id);
+		return;
+	}
+	case 2:
+	{
+		put_give(food_id, customer);
+		return;
+	}
+	case 3:
+	{
+		check();
+		return;
+	}
+	case 4:
+	{
+		give(food_id, customer);
+		return;
+	}
+	case 5:
+	{
+		custom(food);
+		return;
+	}
+	default:
+		cout << endl << "Invalid input";
+		return;
+		break;
+	}
 }
 
 
